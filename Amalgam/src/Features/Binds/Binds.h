@@ -1,0 +1,57 @@
+#pragma once
+#include "../../SDK/SDK.h"
+
+Enum(Bind, Key, Class, WeaponType, ItemSlot, Command, None)
+namespace BindEnum
+{
+	Enum(Key, Hold, Toggle, DoubleClick)
+		Enum(Class, Scout, Soldier, Pyro, Demoman, Heavy, Engineer, Medic, Sniper, Spy)
+		Enum(WeaponType, Hitscan, Projectile, Melee, Throwable)
+		Enum(Command, Execute, Toggle) // Execute runs command when active, Toggle runs on/off commands
+		//Enum(ItemType, First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth)
+}
+Enum(BindVisibility, Always, WhileActive, Hidden)
+
+struct Bind_t
+{
+	std::string m_sName = "";
+	int m_iType = 0;
+	int m_iInfo = 0;
+	int m_iKey = 0;
+
+	bool m_bEnabled = true;
+	int m_iVisibility = BindVisibilityEnum::Always;
+	bool m_bNot = false;
+	bool m_bActive = false;
+	KeyStorage m_tKeyStorage = {};
+
+	int m_iParent = DEFAULT_BIND;
+
+	// For command binds
+	std::string m_sCommand = "";
+	std::string m_sCommandOff = ""; // For toggle commands
+	bool m_bCommandExecuted = false; // Track if command was executed
+
+	std::vector<BaseVar*> m_vVars = {};
+};
+
+class CBinds
+{
+public:
+	void Run();
+	void SetVars(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, bool bManage = true);
+
+	bool GetBind(int iID, Bind_t* pBind);
+
+	void AddBind(int iBind, Bind_t& tCond);
+	void RemoveBind(int iBind, bool bForce = true);
+	int GetParent(int iBind);
+	bool HasChildren(int iBind);
+	bool WillBeEnabled(int iBind);
+
+	void Move(int i1, int i2);
+
+	std::vector<Bind_t> m_vBinds = {};
+};
+
+ADD_FEATURE(CBinds, Binds);
